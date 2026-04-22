@@ -1,0 +1,894 @@
+<!DOCTYPE html>
+<html lang="ro">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Sondaj — Agrement Weekend București</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --forest: #1a2e1a;
+    --moss: #2d4a2d;
+    --leaf: #4a7c4a;
+    --sage: #7aab6e;
+    --cream: #f5f0e8;
+    --warm: #e8dfc8;
+    --ember: #c8622a;
+    --gold: #d4a843;
+    --text: #1a1a14;
+    --muted: #6b6b55;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: var(--cream);
+    font-family: 'DM Sans', sans-serif;
+    color: var(--text);
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  /* Animated background texture */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background: 
+      radial-gradient(ellipse 80% 60% at 20% 10%, rgba(74,124,74,0.12) 0%, transparent 60%),
+      radial-gradient(ellipse 60% 80% at 80% 90%, rgba(200,98,42,0.08) 0%, transparent 60%),
+      radial-gradient(ellipse 40% 40% at 60% 40%, rgba(212,168,67,0.06) 0%, transparent 50%);
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  .container {
+    max-width: 680px;
+    margin: 0 auto;
+    padding: 40px 24px 80px;
+    position: relative;
+    z-index: 1;
+  }
+
+  /* Header */
+  .header {
+    text-align: center;
+    margin-bottom: 48px;
+    animation: fadeUp 0.8s ease both;
+  }
+
+  .header-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: var(--forest);
+    color: var(--sage);
+    font-size: 11px;
+    font-weight: 500;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    padding: 8px 18px;
+    border-radius: 100px;
+    margin-bottom: 24px;
+  }
+
+  .header-badge::before { content: '🌿'; font-size: 14px; }
+
+  h1 {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(32px, 6vw, 52px);
+    font-weight: 900;
+    line-height: 1.1;
+    color: var(--forest);
+    margin-bottom: 16px;
+  }
+
+  h1 em {
+    font-style: italic;
+    color: var(--ember);
+  }
+
+  .subtitle {
+    font-size: 16px;
+    color: var(--muted);
+    font-weight: 300;
+    line-height: 1.6;
+    max-width: 480px;
+    margin: 0 auto;
+  }
+
+  .time-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    margin-top: 16px;
+    font-size: 13px;
+    color: var(--muted);
+  }
+
+  /* Progress */
+  .progress-wrap {
+    background: var(--warm);
+    border-radius: 100px;
+    height: 4px;
+    margin-bottom: 40px;
+    overflow: hidden;
+    animation: fadeUp 0.8s 0.2s ease both;
+  }
+
+  .progress-bar {
+    height: 100%;
+    background: linear-gradient(90deg, var(--leaf), var(--ember));
+    border-radius: 100px;
+    transition: width 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+    width: 0%;
+  }
+
+  .progress-label {
+    display: flex;
+    justify-content: space-between;
+    font-size: 12px;
+    color: var(--muted);
+    margin-bottom: 8px;
+    animation: fadeUp 0.8s 0.2s ease both;
+  }
+
+  /* Question cards */
+  .question-card {
+    background: white;
+    border-radius: 20px;
+    padding: 32px;
+    margin-bottom: 20px;
+    border: 1px solid rgba(74,124,74,0.12);
+    box-shadow: 0 2px 20px rgba(26,46,26,0.06);
+    animation: fadeUp 0.6s ease both;
+    transition: box-shadow 0.3s;
+  }
+
+  .question-card:hover {
+    box-shadow: 0 4px 32px rgba(26,46,26,0.1);
+  }
+
+  .q-number {
+    font-size: 11px;
+    font-weight: 500;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--sage);
+    margin-bottom: 10px;
+  }
+
+  .q-text {
+    font-family: 'Playfair Display', serif;
+    font-size: 20px;
+    font-weight: 700;
+    color: var(--forest);
+    line-height: 1.3;
+    margin-bottom: 24px;
+  }
+
+  /* Radio & Checkbox options */
+  .options {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .options.grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+  }
+
+  .option-label {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 14px 18px;
+    border: 1.5px solid var(--warm);
+    border-radius: 12px;
+    cursor: pointer;
+    transition: all 0.2s;
+    font-size: 15px;
+    color: var(--text);
+    user-select: none;
+  }
+
+  .option-label:hover {
+    border-color: var(--sage);
+    background: rgba(74,124,74,0.04);
+  }
+
+  .option-label input {
+    display: none;
+  }
+
+  .option-label.selected {
+    border-color: var(--leaf);
+    background: rgba(74,124,74,0.08);
+    color: var(--forest);
+    font-weight: 500;
+  }
+
+  .option-dot {
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    border: 2px solid var(--warm);
+    flex-shrink: 0;
+    transition: all 0.2s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .option-label.selected .option-dot {
+    border-color: var(--leaf);
+    background: var(--leaf);
+  }
+
+  .option-dot::after {
+    content: '';
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: white;
+    opacity: 0;
+    transition: opacity 0.2s;
+  }
+
+  .option-label.selected .option-dot::after { opacity: 1; }
+
+  .option-box {
+    width: 20px;
+    height: 20px;
+    border-radius: 6px;
+    border: 2px solid var(--warm);
+    flex-shrink: 0;
+    transition: all 0.2s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 12px;
+  }
+
+  .option-label.selected .option-box {
+    border-color: var(--leaf);
+    background: var(--leaf);
+    color: white;
+  }
+
+  .option-emoji {
+    font-size: 18px;
+    flex-shrink: 0;
+  }
+
+  /* Range slider */
+  .range-wrap {
+    padding: 8px 0;
+  }
+
+  .range-labels {
+    display: flex;
+    justify-content: space-between;
+    font-size: 13px;
+    color: var(--muted);
+    margin-bottom: 12px;
+  }
+
+  input[type=range] {
+    -webkit-appearance: none;
+    width: 100%;
+    height: 6px;
+    background: var(--warm);
+    border-radius: 100px;
+    outline: none;
+    cursor: pointer;
+  }
+
+  input[type=range]::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    background: var(--forest);
+    cursor: pointer;
+    border: 3px solid white;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+    transition: transform 0.2s;
+  }
+
+  input[type=range]::-webkit-slider-thumb:hover {
+    transform: scale(1.2);
+  }
+
+  .range-value {
+    text-align: center;
+    font-family: 'Playfair Display', serif;
+    font-size: 32px;
+    font-weight: 700;
+    color: var(--forest);
+    margin-top: 16px;
+  }
+
+  .range-value span {
+    font-size: 16px;
+    color: var(--muted);
+    font-family: 'DM Sans', sans-serif;
+    font-weight: 300;
+  }
+
+  /* Distance buttons */
+  .distance-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 10px;
+  }
+
+  .dist-btn {
+    padding: 16px 8px;
+    border: 1.5px solid var(--warm);
+    border-radius: 12px;
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.2s;
+    font-size: 14px;
+    color: var(--text);
+    user-select: none;
+  }
+
+  .dist-btn:hover { border-color: var(--sage); background: rgba(74,124,74,0.04); }
+  .dist-btn.selected { border-color: var(--leaf); background: rgba(74,124,74,0.08); font-weight: 500; color: var(--forest); }
+
+  .dist-btn .km { font-family: 'Playfair Display', serif; font-size: 22px; font-weight: 700; display: block; }
+
+  /* Textarea */
+  textarea {
+    width: 100%;
+    border: 1.5px solid var(--warm);
+    border-radius: 12px;
+    padding: 14px 18px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 15px;
+    color: var(--text);
+    resize: vertical;
+    min-height: 100px;
+    outline: none;
+    transition: border-color 0.2s;
+    background: transparent;
+  }
+
+  textarea:focus { border-color: var(--sage); }
+
+  /* Submit */
+  .submit-area {
+    text-align: center;
+    margin-top: 40px;
+    animation: fadeUp 0.6s ease both;
+  }
+
+  .submit-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 12px;
+    background: var(--forest);
+    color: white;
+    border: none;
+    padding: 18px 48px;
+    border-radius: 100px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 16px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.3s;
+    letter-spacing: 0.5px;
+  }
+
+  .submit-btn:hover {
+    background: var(--moss);
+    transform: translateY(-2px);
+    box-shadow: 0 8px 24px rgba(26,46,26,0.25);
+  }
+
+  .submit-btn:active { transform: translateY(0); }
+
+  .submit-note {
+    font-size: 13px;
+    color: var(--muted);
+    margin-top: 16px;
+  }
+
+  /* Thank you screen */
+  .thankyou {
+    display: none;
+    text-align: center;
+    padding: 80px 24px;
+    animation: fadeUp 0.8s ease both;
+  }
+
+  .thankyou-icon {
+    font-size: 64px;
+    margin-bottom: 24px;
+  }
+
+  .thankyou h2 {
+    font-family: 'Playfair Display', serif;
+    font-size: 36px;
+    color: var(--forest);
+    margin-bottom: 16px;
+  }
+
+  .thankyou p {
+    font-size: 16px;
+    color: var(--muted);
+    max-width: 400px;
+    margin: 0 auto;
+    line-height: 1.7;
+  }
+
+  .thankyou .share-prompt {
+    margin-top: 40px;
+    padding: 24px;
+    background: white;
+    border-radius: 16px;
+    border: 1px solid rgba(74,124,74,0.15);
+  }
+
+  .thankyou .share-prompt p {
+    font-size: 14px;
+    margin-bottom: 16px;
+    color: var(--text);
+    font-weight: 500;
+  }
+
+  .copy-link-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: var(--cream);
+    border: 1.5px solid var(--warm);
+    border-radius: 100px;
+    padding: 12px 24px;
+    font-size: 14px;
+    cursor: pointer;
+    transition: all 0.2s;
+    color: var(--text);
+    font-family: 'DM Sans', sans-serif;
+  }
+
+  .copy-link-btn:hover { border-color: var(--sage); }
+
+  /* Section divider */
+  .section-title {
+    font-size: 11px;
+    font-weight: 500;
+    letter-spacing: 2.5px;
+    text-transform: uppercase;
+    color: var(--sage);
+    margin: 40px 0 20px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    animation: fadeUp 0.6s ease both;
+  }
+
+  .section-title::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: var(--warm);
+  }
+
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  /* Stagger animation delays */
+  .question-card:nth-child(1) { animation-delay: 0.1s; }
+  .question-card:nth-child(2) { animation-delay: 0.2s; }
+  .question-card:nth-child(3) { animation-delay: 0.3s; }
+  .question-card:nth-child(4) { animation-delay: 0.4s; }
+  .question-card:nth-child(5) { animation-delay: 0.5s; }
+  .question-card:nth-child(6) { animation-delay: 0.6s; }
+
+  @media (max-width: 500px) {
+    .options.grid { grid-template-columns: 1fr; }
+    .distance-grid { grid-template-columns: repeat(2, 1fr); }
+    .container { padding: 24px 16px 60px; }
+    .question-card { padding: 24px 20px; }
+  }
+</style>
+</head>
+<body>
+
+<div class="container">
+
+  <div class="header">
+    <div class="header-badge">Sondaj de opinie · 3 minute</div>
+    <h1>Weekend la grătar,<br><em>lângă București</em></h1>
+    <p class="subtitle">Ajută-ne să înțelegem ce îți lipsește când vrei să ieși la grătar cu familia sau prietenii în weekend.</p>
+    <div class="time-badge">⏱ Durată estimată: 2–3 minute · Anonim</div>
+  </div>
+
+  <div class="progress-label">
+    <span id="progressText">Completat: 0%</span>
+    <span id="answeredText">0 din 9 întrebări</span>
+  </div>
+  <div class="progress-wrap">
+    <div class="progress-bar" id="progressBar"></div>
+  </div>
+
+  <div id="formArea">
+
+    <!-- Q1 -->
+    <div class="section-title">Obiceiuri actuale</div>
+
+    <div class="question-card">
+      <div class="q-number">Întrebarea 1</div>
+      <div class="q-text">Cât de des ieși la grătar/picnic în afara orașului?</div>
+      <div class="options" id="q1">
+        <label class="option-label" onclick="selectOption(this,'q1','radio')">
+          <input type="radio" name="q1" value="saptamanal">
+          <span class="option-dot"></span>
+          <span class="option-emoji">🔥</span>
+          Aproape în fiecare weekend, de la primăvară la toamnă
+        </label>
+        <label class="option-label" onclick="selectOption(this,'q1','radio')">
+          <input type="radio" name="q1" value="lunar">
+          <span class="option-dot"></span>
+          <span class="option-emoji">🌿</span>
+          De 1–2 ori pe lună în sezon
+        </label>
+        <label class="option-label" onclick="selectOption(this,'q1','radio')">
+          <input type="radio" name="q1" value="ocazional">
+          <span class="option-dot"></span>
+          <span class="option-emoji">📅</span>
+          Doar de sărbători (1 Mai, Paști, etc.)
+        </label>
+        <label class="option-label" onclick="selectOption(this,'q1','radio')">
+          <input type="radio" name="q1" value="rar">
+          <span class="option-dot"></span>
+          <span class="option-emoji">😅</span>
+          Rar, nu prea am unde sau cu cine
+        </label>
+      </div>
+    </div>
+
+    <!-- Q2 -->
+    <div class="question-card">
+      <div class="q-number">Întrebarea 2</div>
+      <div class="q-text">Unde mergi de obicei când vrei grătar în natură?</div>
+      <div class="options" id="q2">
+        <label class="option-label" onclick="selectOption(this,'q2','radio')">
+          <input type="radio" name="q2" value="cernica">
+          <span class="option-dot"></span>
+          <span class="option-emoji">🌲</span>
+          Cernica / Brănești / Snagov
+        </label>
+        <label class="option-label" onclick="selectOption(this,'q2','radio')">
+          <input type="radio" name="q2" value="parc">
+          <span class="option-dot"></span>
+          <span class="option-emoji">🏙️</span>
+          Parcuri din oraș (Lumea Copiilor, Crângași)
+        </label>
+        <label class="option-label" onclick="selectOption(this,'q2','radio')">
+          <input type="radio" name="q2" value="propriu">
+          <span class="option-dot"></span>
+          <span class="option-emoji">🏡</span>
+          La curte/grădina proprie sau a unor prieteni
+        </label>
+        <label class="option-label" onclick="selectOption(this,'q2','radio')">
+          <input type="radio" name="q2" value="nicaieri">
+          <span class="option-dot"></span>
+          <span class="option-emoji">🤷</span>
+          Nu prea am o locație fixă
+        </label>
+      </div>
+    </div>
+
+    <!-- Q3 -->
+    <div class="question-card">
+      <div class="q-number">Întrebarea 3</div>
+      <div class="q-text">Ce îți lipsește cel mai mult la locațiile existente?</div>
+      <div class="options" id="q3">
+        <label class="option-label" onclick="selectOption(this,'q3','check')">
+          <input type="checkbox" name="q3" value="intimitate">
+          <span class="option-box">✓</span>
+          Intimitate — foișor privat, nu printre alți oameni
+        </label>
+        <label class="option-label" onclick="selectOption(this,'q3','check')">
+          <input type="checkbox" name="q3" value="rezervare">
+          <span class="option-box">✓</span>
+          Posibilitate de rezervare în avans
+        </label>
+        <label class="option-label" onclick="selectOption(this,'q3','check')">
+          <input type="checkbox" name="q3" value="gratar_fix">
+          <span class="option-box">✓</span>
+          Grătar fix amenajat, nu să aduc eu de acasă
+        </label>
+        <label class="option-label" onclick="selectOption(this,'q3','check')">
+          <input type="checkbox" name="q3" value="apa_curent">
+          <span class="option-box">✓</span>
+          Apă curentă și prize electrice disponibile
+        </label>
+        <label class="option-label" onclick="selectOption(this,'q3','check')">
+          <input type="checkbox" name="q3" value="parcare">
+          <span class="option-box">✓</span>
+          Parcare comodă în apropiere
+        </label>
+        <label class="option-label" onclick="selectOption(this,'q3','check')">
+          <input type="checkbox" name="q3" value="curatenie">
+          <span class="option-box">✓</span>
+          Curățenie și igienă la locuri sanitare
+        </label>
+        <label class="option-label" onclick="selectOption(this,'q3','check')">
+          <input type="checkbox" name="q3" value="joaca">
+          <span class="option-box">✓</span>
+          Loc de joacă pentru copii în apropiere
+        </label>
+      </div>
+    </div>
+
+    <!-- Section 2 -->
+    <div class="section-title">Locație și preferințe</div>
+
+    <!-- Q4 -->
+    <div class="question-card">
+      <div class="q-number">Întrebarea 4</div>
+      <div class="q-text">Ce distanță maximă ești dispus să parcurgi față de București?</div>
+      <div class="distance-grid" id="q4">
+        <div class="dist-btn" onclick="selectDist(this,'q4','10')">
+          <span class="km">10 km</span>
+          ~15 min
+        </div>
+        <div class="dist-btn" onclick="selectDist(this,'q4','20')">
+          <span class="km">20 km</span>
+          ~25 min
+        </div>
+        <div class="dist-btn" onclick="selectDist(this,'q4','35')">
+          <span class="km">35 km</span>
+          ~40 min
+        </div>
+        <div class="dist-btn" onclick="selectDist(this,'q4','50')">
+          <span class="km">50 km</span>
+          ~55 min
+        </div>
+        <div class="dist-btn" onclick="selectDist(this,'q4','oriunde')">
+          <span class="km">Oriunde</span>
+          dacă merită
+        </div>
+      </div>
+    </div>
+
+    <!-- Q5 -->
+    <div class="question-card">
+      <div class="q-number">Întrebarea 5</div>
+      <div class="q-text">Cu cine mergi de obicei?</div>
+      <div class="options grid" id="q5">
+        <label class="option-label" onclick="selectOption(this,'q5','radio')">
+          <input type="radio" name="q5" value="familie_copii">
+          <span class="option-dot"></span>
+          <span class="option-emoji">👨‍👩‍👧</span>
+          Familie cu copii
+        </label>
+        <label class="option-label" onclick="selectOption(this,'q5','radio')">
+          <input type="radio" name="q5" value="cuplu">
+          <span class="option-dot"></span>
+          <span class="option-emoji">💑</span>
+          Cuplu (fără copii)
+        </label>
+        <label class="option-label" onclick="selectOption(this,'q5','radio')">
+          <input type="radio" name="q5" value="prieteni">
+          <span class="option-dot"></span>
+          <span class="option-emoji">🍻</span>
+          Grup de prieteni
+        </label>
+        <label class="option-label" onclick="selectOption(this,'q5','radio')">
+          <input type="radio" name="q5" value="extins">
+          <span class="option-dot"></span>
+          <span class="option-emoji">👨‍👩‍👧‍👦</span>
+          Familie extinsă (10+ persoane)
+        </label>
+      </div>
+    </div>
+
+    <!-- Section 3 -->
+    <div class="section-title">Preț și disponibilitate</div>
+
+    <!-- Q6 — Price slider -->
+    <div class="question-card">
+      <div class="q-number">Întrebarea 6</div>
+      <div class="q-text">Cât ai plăti pentru un foișor privat cu grătar inclus, 3–4 ore?</div>
+      <div class="range-wrap">
+        <div class="range-labels">
+          <span>50 lei</span>
+          <span>500 lei</span>
+        </div>
+        <input type="range" id="priceSlider" min="50" max="500" step="25" value="150" oninput="updatePrice(this.value)">
+        <div class="range-value" id="priceDisplay">150 <span>lei / sesiune</span></div>
+      </div>
+    </div>
+
+    <!-- Q7 -->
+    <div class="question-card">
+      <div class="q-number">Întrebarea 7</div>
+      <div class="q-text">Cum ai prefera să rezervi?</div>
+      <div class="options" id="q7">
+        <label class="option-label" onclick="selectOption(this,'q7','radio')">
+          <input type="radio" name="q7" value="app">
+          <span class="option-dot"></span>
+          <span class="option-emoji">📱</span>
+          Aplicație / website cu calendar online
+        </label>
+        <label class="option-label" onclick="selectOption(this,'q7','radio')">
+          <input type="radio" name="q7" value="whatsapp">
+          <span class="option-dot"></span>
+          <span class="option-emoji">💬</span>
+          WhatsApp / mesaj direct
+        </label>
+        <label class="option-label" onclick="selectOption(this,'q7','radio')">
+          <input type="radio" name="q7" value="telefon">
+          <span class="option-dot"></span>
+          <span class="option-emoji">📞</span>
+          Telefonic
+        </label>
+        <label class="option-label" onclick="selectOption(this,'q7','radio')">
+          <input type="radio" name="q7" value="spontan">
+          <span class="option-dot"></span>
+          <span class="option-emoji">🚶</span>
+          Fără rezervare, merg spontan
+        </label>
+      </div>
+    </div>
+
+    <!-- Q8 -->
+    <div class="question-card">
+      <div class="q-number">Întrebarea 8</div>
+      <div class="q-text">Dacă ar exista o astfel de locație mâine, ai merge?</div>
+      <div class="options" id="q8">
+        <label class="option-label" onclick="selectOption(this,'q8','radio')">
+          <input type="radio" name="q8" value="da_sigur">
+          <span class="option-dot"></span>
+          <span class="option-emoji">🙌</span>
+          Da, sigur! Aștept așa ceva de mult
+        </label>
+        <label class="option-label" onclick="selectOption(this,'q8','radio')">
+          <input type="radio" name="q8" value="da_probabil">
+          <span class="option-dot"></span>
+          <span class="option-emoji">👍</span>
+          Probabil da, depinde de locație și preț
+        </label>
+        <label class="option-label" onclick="selectOption(this,'q8','radio')">
+          <input type="radio" name="q8" value="poate">
+          <span class="option-dot"></span>
+          <span class="option-emoji">🤔</span>
+          Poate, trebuie să văd mai multe detalii
+        </label>
+        <label class="option-label" onclick="selectOption(this,'q8','radio')">
+          <input type="radio" name="q8" value="nu">
+          <span class="option-dot"></span>
+          <span class="option-emoji">👎</span>
+          Nu mă interesează
+        </label>
+      </div>
+    </div>
+
+    <!-- Q9 -->
+    <div class="question-card">
+      <div class="q-number">Întrebarea 9 · Opțional</div>
+      <div class="q-text">Ce altceva ar face această locație perfectă pentru tine?</div>
+      <textarea id="q9" placeholder="Ex: Chioșc cu mici și bere, ponton la lac, loc de joacă, Wi-Fi..." oninput="updateProgress()"></textarea>
+    </div>
+
+    <div class="submit-area">
+      <button class="submit-btn" onclick="submitForm()">
+        🌿 Trimite răspunsurile
+      </button>
+      <p class="submit-note">Anonim · Nicio adresă de email necesară · Durează 30 secunde</p>
+    </div>
+
+  </div><!-- /formArea -->
+
+  <!-- Thank you -->
+  <div class="thankyou" id="thankyou">
+    <div class="thankyou-icon">🔥</div>
+    <h2>Mulțumim frumos!</h2>
+    <p>Răspunsul tău contează enorm. Ajuți la crearea unui loc de agrement cu adevărat util pentru familiile din București.</p>
+    <div class="share-prompt">
+      <p>📢 Distribuie și prietenilor — cu cât mai multe răspunsuri, cu atât locația va fi mai bine gândită!</p>
+      <button class="copy-link-btn" onclick="copyLink()">🔗 Copiază link sondaj</button>
+    </div>
+  </div>
+
+</div><!-- /container -->
+
+<script>
+  const answers = {};
+
+  function selectOption(label, qId, type) {
+    const group = document.getElementById(qId);
+    if (!group) return;
+    const labels = group.querySelectorAll('.option-label');
+
+    if (type === 'radio') {
+      labels.forEach(l => l.classList.remove('selected'));
+      label.classList.add('selected');
+      answers[qId] = label.querySelector('input').value;
+    } else {
+      label.classList.toggle('selected');
+      const checked = [...group.querySelectorAll('.option-label.selected')]
+        .map(l => l.querySelector('input').value);
+      answers[qId] = checked;
+    }
+    updateProgress();
+  }
+
+  function selectDist(btn, qId, val) {
+    const grid = document.getElementById(qId);
+    grid.querySelectorAll('.dist-btn').forEach(b => b.classList.remove('selected'));
+    btn.classList.add('selected');
+    answers[qId] = val;
+    updateProgress();
+  }
+
+  function updatePrice(val) {
+    document.getElementById('priceDisplay').innerHTML = val + ' <span>lei / sesiune</span>';
+    answers['q6'] = val;
+    updateProgress();
+  }
+
+  function updateProgress() {
+    const q9val = document.getElementById('q9').value.trim();
+    if (q9val) answers['q9'] = q9val;
+
+    // Count answered (q6 always counted as answered since has default)
+    answers['q6'] = document.getElementById('priceSlider').value;
+    const total = 9;
+    const done = ['q1','q2','q3','q4','q5','q6','q7','q8'].filter(k => {
+      const v = answers[k];
+      return v && (Array.isArray(v) ? v.length > 0 : true);
+    }).length;
+
+    const pct = Math.round((done / total) * 100);
+    document.getElementById('progressBar').style.width = pct + '%';
+    document.getElementById('progressText').textContent = 'Completat: ' + pct + '%';
+    document.getElementById('answeredText').textContent = done + ' din ' + total + ' întrebări';
+  }
+
+  function submitForm() {
+    // Validate minimum answers
+    const required = ['q1','q2','q4','q5','q8'];
+    const missing = required.filter(k => !answers[k]);
+    if (missing.length > 2) {
+      alert('Te rugăm să răspunzi la câteva întrebări înainte de a trimite.');
+      return;
+    }
+
+    // Collect all data
+    answers['q6'] = document.getElementById('priceSlider').value;
+    answers['q9'] = document.getElementById('q9').value.trim();
+    answers['timestamp'] = new Date().toISOString();
+
+    console.log('Sondaj trimis:', JSON.stringify(answers, null, 2));
+
+    // Show thank you
+    document.getElementById('formArea').style.display = 'none';
+    document.getElementById('thankyou').style.display = 'block';
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+
+  function copyLink() {
+    const url = window.location.href;
+    navigator.clipboard.writeText(url).then(() => {
+      const btn = document.querySelector('.copy-link-btn');
+      btn.textContent = '✅ Link copiat!';
+      setTimeout(() => btn.innerHTML = '🔗 Copiază link sondaj', 2000);
+    });
+  }
+
+  // Init price
+  updateProgress();
+</script>
+</body>
+</html>
