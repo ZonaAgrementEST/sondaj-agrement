@@ -842,6 +842,9 @@
   const answers = {};
 
   function selectOption(label, qId, type) {
+    // Prevent event from firing twice (label click + checkbox click)
+    event.preventDefault();
+    
     const group = document.getElementById(qId);
     if (!group) return;
     const labels = group.querySelectorAll('.option-label');
@@ -851,7 +854,12 @@
       label.classList.add('selected');
       answers[qId] = label.querySelector('input').value;
     } else {
-      label.classList.toggle('selected');
+      // Toggle selected class
+      if (label.classList.contains('selected')) {
+        label.classList.remove('selected');
+      } else {
+        label.classList.add('selected');
+      }
       const checked = [...group.querySelectorAll('.option-label.selected')]
         .map(l => l.querySelector('input').value);
       answers[qId] = checked;
